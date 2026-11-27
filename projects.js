@@ -4,6 +4,7 @@
   - To add a project: copy one block, give it a unique `id`, fill in the fields.
   - Images: put a cover at images/projects/<id>.jpg (16:10).
     Optional gallery: add file paths to `gallery`, e.g. "images/projects/mustergo/1.jpg".
+  - links: buttons; a relative url like "demos/<id>/" points at a demo hosted in this site
   - github: repo URL (shows a GitHub button on the card and detail page)
   - category: "web" | "data" | "mobile" | "design"
 */
@@ -22,7 +23,7 @@ const PROJECTS = [
     summary: "A live headcount and attendance app for SCCCI overseas delegations, built so that no one gets left behind. Staff track trips on desktop while delegates check in by QR code or face scan on mobile.",
     cardDetail: "I built the <strong>admin dashboard and authentication</strong>, including a 25-key permission system for role-based access. I also built <strong>offline-first attendance sync</strong> for low-connectivity trips, and I <strong>deployed the full stack</strong> to Alibaba Cloud with Nginx and PM2.",
     stack: ["React", "Vite", "Node.js", "Express", "PostgreSQL (Neon)", "JWT", "Alibaba Cloud ECS", "Nginx", "PM2"],
-    links: [{ label: "Open live app", url: "https://mustergo.duckdns.org" }],
+    links: [{ label: "Try the interactive demo", url: "demos/mustergo/" }],
     stats: [
       { value: "25", label: "Permission keys" },
       { value: "6", label: "Feature modules" },
@@ -83,8 +84,7 @@ const PROJECTS = [
     colors: ["#7c5cff", "#22d3ee"],
     summary: "A web app that connects Singaporean youths and seniors through shared interests. I built the real-time messaging feature.",
     stack: ["Python", "Flask", "Flask-SocketIO", "HTML/CSS", "JavaScript"],
-    links: [],
-    linkNote: "Live demo coming soon",
+    links: [{ label: "Try the interactive demo", url: "demos/sgen/" }],
     problem: "Youths and seniors in Singapore often live side by side but rarely connect. SGEN matches them through shared interests, such as cooking, gardening or games, so they can start a conversation.",
     solution: "A web platform where users create profiles, get matched by interest and chat with each other.",
     contributions: [
