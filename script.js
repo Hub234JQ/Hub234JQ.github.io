@@ -21,8 +21,15 @@ const GH_ICON = '<svg class="gh" viewBox="0 0 24 24" aria-hidden="true"><path d=
 const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
 function galleryHTML(items, title, word = 'photo') {
   if (!items.length) return '';
-  return `<section class="d-gallery" id="gallery"><p class="kicker">Gallery · ${plural(items.length, word)}</p>
-    <div class="masonry">${items.map((it, n) => `
+  return `<section class="d-gallery" id="gallery">
+    <div class="d-gallery__head">
+      <p class="kicker">Gallery · ${plural(items.length, word)}</p>
+      <div class="strip__btns">
+        <button type="button" class="strip__nav strip__prev" aria-label="Scroll gallery left">‹</button>
+        <button type="button" class="strip__nav strip__next" aria-label="Scroll gallery right">›</button>
+      </div>
+    </div>
+    <div class="masonry" tabindex="0" aria-label="${esc(title)} gallery, scroll sideways">${items.map((it, n) => `
       <figure class="masonry__item">
         <button type="button" class="masonry__btn" data-lb="${n}" aria-label="Open ${word} ${n + 1}${it.caption ? ': ' + esc(it.caption) : ''}">
           <img src="${it.src}" alt="${esc(it.caption || `${title} ${word} ${n + 1}`)}" loading="lazy" />
@@ -37,6 +44,26 @@ function galleryHTML(items, title, word = 'photo') {
     </div>`;
 }
 function mountLightbox(items, title) {
+  // Horizontal strip: arrow buttons scroll ~80% of the visible width; fade/arrows update at the ends.
+  const strip = $('.masonry');
+  if (strip) {
+    const prevB = $('.strip__prev'), nextB = $('.strip__next');
+    const update = () => {
+      const max = strip.scrollWidth - strip.clientWidth - 2;
+      if (prevB) prevB.disabled = strip.scrollLeft <= 2;
+      if (nextB) nextB.disabled = strip.scrollLeft >= max;
+      strip.classList.toggle('is-end', strip.scrollLeft >= max);
+      if (prevB && nextB && max <= 0) prevB.parentElement.style.visibility = 'hidden';
+      else if (prevB) prevB.parentElement.style.visibility = '';
+    };
+    const by = (dir) => strip.scrollBy({ left: dir * strip.clientWidth * 0.8, behavior: 'smooth' });
+    prevB && prevB.addEventListener('click', () => by(-1));
+    nextB && nextB.addEventListener('click', () => by(1));
+    strip.addEventListener('scroll', update, { passive: true });
+    $$('img', strip).forEach((im) => im.addEventListener('load', update));
+    window.addEventListener('resize', update);
+    update();
+  }
   const lb = $('#lightbox');
   if (!lb || !items.length) return;
   const lbImg = $('img', lb), lbCap = $('figcaption', lb);

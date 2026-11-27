@@ -87,7 +87,7 @@ Hero, About, Experience timeline, toolkit, certifications, the short award list 
 
 ### Shared UI pieces (in `script.js`)
 - `media(item, cls, src, alt)` — image with a coloured gradient fallback if the file is missing.
-- `galleryHTML(items, title, word)` + `mountLightbox(items, title)` — masonry photo grid and full-screen viewer
+- `galleryHTML(items, title, word)` + `mountLightbox(items, title)` — **one horizontal, swipeable row** (same-height photos, ‹ › buttons on desktop) and full-screen viewer
   (← → / Esc keys, focus returns to the clicked photo). Used by project, volunteer and achievements pages.
 
 ### Images
