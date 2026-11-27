@@ -30,6 +30,7 @@ Live site: **https://hub234jq.github.io** (GitHub Pages, repo `Hub234JQ/Hub234JQ
 | `publish/` | Git clone of the live repo; `publish.py` fills it. **Don't edit by hand.** | (is the repo) |
 | `demo-src/` | Source for rebuilding the demos (mock API layers, recorded data, tools) | ❌ |
 | `COPY.md` | Rewritten text for the old Wix site | ❌ |
+| `WIX_UPDATE.md` | **Task guide for an AI agent updating the Wix site** — status, remaining work, exact text, Wix UI tips | ❌ |
 | `me.jpeg` | Original uncropped photo — private, never publish | ❌ |
 
 Only the files listed in `SITE_FILES` / `SITE_DIRS` inside `publish.py` are ever published.
@@ -120,4 +121,5 @@ To rebuild one (only needed if the app's front end changes):
 
 ## 7. Related
 - Old sites (being retired): Wix `kokjunqi.wixsite.com/kokjunqi`, WordPress `portfoliokokjunqi.wordpress.com`.
+  To update Wix, follow `WIX_UPDATE.md`.
 - GitHub: https://github.com/Hub234JQ · LinkedIn: https://www.linkedin.com/in/jun-qi-kok-928b70263/
