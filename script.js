@@ -97,6 +97,109 @@ if (detail && typeof PROJECTS !== 'undefined') {
   }
 }
 
+// ---------- Volunteering: home cards ----------
+const volUrl = (v) => `volunteer.html?id=${encodeURIComponent(v.id)}`;
+const volPhotos = (v) => Array.from({ length: v.photos || 0 }, (_, i) => `images/volunteer/${v.id}/${String(i + 1).padStart(2, '0')}.jpg`);
+const volCards = $('#vol-cards');
+if (volCards && typeof VOLUNTEER !== 'undefined') {
+  volCards.innerHTML = VOLUNTEER.map((v) => `
+    <article class="vol__card reveal">
+      <a href="${volUrl(v)}" class="vol__link" aria-label="${esc(v.title)}: view details and photos"></a>
+      ${media(v, 'vol__img', `images/volunteer/${v.id}.jpg`, `${v.title} photo`)}
+      <p class="project__meta">${esc(v.since)}${v.photos ? ` · ${v.photos} photo${v.photos > 1 ? 's' : ''}` : ''}</p>
+      <h3>${esc(v.title)}</h3>
+      <p>${esc(v.summary)}</p>
+      <span class="link vol__more">View details &amp; photos ${ARROW}</span>
+    </article>`).join('');
+}
+
+// ---------- Volunteering: detail page ----------
+const volDetail = $('#volunteer-detail');
+if (volDetail && typeof VOLUNTEER !== 'undefined') {
+  const id = new URLSearchParams(location.search).get('id');
+  const i = VOLUNTEER.findIndex((v) => v.id === id);
+  if (i === -1) {
+    volDetail.innerHTML = `<div class="container notfound"><h1>Not found</h1><a class="btn" href="index.html#journey">Back to my journey</a></div>`;
+  } else {
+    const v = VOLUNTEER[i];
+    const prev = VOLUNTEER[(i - 1 + VOLUNTEER.length) % VOLUNTEER.length];
+    const next = VOLUNTEER[(i + 1) % VOLUNTEER.length];
+    const photos = volPhotos(v);
+    const cap = (n) => (v.captions && v.captions[n]) || '';
+    document.title = `${v.title} — Kok Jun Qi`;
+    volDetail.innerHTML = `
+      <section class="d-hero">
+        <div class="hero__glow" aria-hidden="true"></div>
+        <div class="container">
+          <a class="back" href="index.html#journey">← Beyond the code</a>
+          <p class="kicker">Volunteering · ${esc(v.since)}</p>
+          <h1>${esc(v.title)}</h1>
+          <p class="lead">${esc(v.summary)}</p>
+        </div>
+      </section>
+      <div class="container">
+        ${media(v, 'd-cover reveal', `images/volunteer/${v.id}.jpg`, `${v.title} photo`)}
+        <div class="d-grid">
+          <aside class="d-facts reveal">
+            <dl>
+              <div><dt>When</dt><dd>${esc(v.since)}</dd></div>
+              <div><dt>With</dt><dd>${esc(v.org)}</dd></div>
+              <div><dt>Photos</dt><dd>${photos.length}</dd></div>
+            </dl>
+            ${photos.length ? `<a class="btn btn--small" href="#gallery">See the photos ↓</a>` : ''}
+          </aside>
+          <div class="d-body">
+            <section class="reveal"><p class="kicker">My experience</p>${v.story.map((p) => `<p>${esc(p)}</p>`).join('')}</section>
+            ${v.learned && v.learned.length ? `<section class="reveal"><p class="kicker">What it taught me</p><ul class="d-list">${v.learned.map((l) => `<li>${l}</li>`).join('')}</ul></section>` : ''}
+            ${v.next ? `<section class="reveal"><p class="kicker">What's next</p><blockquote>${esc(v.next)}</blockquote></section>` : ''}
+          </div>
+        </div>
+        ${photos.length ? `<section class="d-gallery" id="gallery"><p class="kicker">Gallery · ${photos.length} photo${photos.length > 1 ? 's' : ''}</p>
+          <div class="masonry">${photos.map((src, n) => `
+            <figure class="masonry__item">
+              <button type="button" class="masonry__btn" data-lb="${n}" aria-label="Open photo ${n + 1}">
+                <img src="${src}" alt="${esc(cap(n) || `${v.title} photo ${n + 1}`)}" loading="lazy" />
+              </button>
+              ${cap(n) ? `<figcaption>${esc(cap(n))}</figcaption>` : ''}
+            </figure>`).join('')}</div></section>` : ''}
+        <nav class="d-nav" aria-label="More volunteering">
+          <a href="${volUrl(prev)}"><span>← Previous</span><strong>${esc(prev.title)}</strong></a>
+          <a href="${volUrl(next)}" class="d-nav__next"><span>Next →</span><strong>${esc(next.title)}</strong></a>
+        </nav>
+      </div>
+      <div class="lightbox" id="lightbox" hidden>
+        <button type="button" class="lightbox__close" aria-label="Close">×</button>
+        <button type="button" class="lightbox__nav lightbox__prev" aria-label="Previous photo">‹</button>
+        <figure><img alt="" /><figcaption></figcaption></figure>
+        <button type="button" class="lightbox__nav lightbox__next" aria-label="Next photo">›</button>
+      </div>`;
+
+    // Lightbox: click a photo to view it large; arrows / Esc on keyboard.
+    const lb = $('#lightbox');
+    const lbImg = $('img', lb), lbCap = $('figcaption', lb);
+    let cur = 0;
+    const show = (n) => {
+      cur = (n + photos.length) % photos.length;
+      lbImg.src = photos[cur];
+      lbImg.alt = cap(cur) || `${v.title} photo ${cur + 1}`;
+      lbCap.textContent = `${cap(cur) ? cap(cur) + ' · ' : ''}${cur + 1} / ${photos.length}`;
+    };
+    const open = (n) => { show(n); lb.hidden = false; document.body.style.overflow = 'hidden'; $('.lightbox__close', lb).focus(); };
+    const close = () => { lb.hidden = true; document.body.style.overflow = ''; };
+    $$('[data-lb]').forEach((b) => b.addEventListener('click', () => open(+b.dataset.lb)));
+    $('.lightbox__close', lb).addEventListener('click', close);
+    $('.lightbox__prev', lb).addEventListener('click', () => show(cur - 1));
+    $('.lightbox__next', lb).addEventListener('click', () => show(cur + 1));
+    lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
+    document.addEventListener('keydown', (e) => {
+      if (lb.hidden) return;
+      if (e.key === 'Escape') close();
+      if (e.key === 'ArrowLeft') show(cur - 1);
+      if (e.key === 'ArrowRight') show(cur + 1);
+    });
+  }
+}
+
 // ---------- Footer year ----------
 $$('.js-year').forEach((el) => (el.textContent = new Date().getFullYear()));
 

@@ -207,6 +207,35 @@ blockquote { margin: 0; padding: 1.4rem 1.6rem; border-left: 3px solid var(--acc
 .contact--compact .contact__inner { align-items: center; }
 .contact__cta { display: flex; flex-wrap: wrap; gap: .8rem; justify-content: flex-end; }
 
+/* Volunteer cards (clickable) */
+.vol__card { position: relative; display: flex; flex-direction: column; transition: transform .3s, border-color .3s; }
+.vol__card:hover { transform: translateY(-4px); border-color: rgba(139, 123, 255, .45); }
+.vol__link { position: absolute; inset: 0; z-index: 2; border-radius: inherit; }
+.vol__img img { transition: transform .5s; }
+.vol__card:hover .vol__img img { transform: scale(1.04); }
+.vol__more { padding-inline: .5rem; margin-top: auto; padding-top: .8rem; }
+
+/* Photo gallery (masonry) + lightbox */
+.masonry { columns: 3 260px; column-gap: 1rem; }
+.masonry__item { break-inside: avoid; margin: 0 0 1rem; }
+.masonry__btn { display: block; width: 100%; padding: 0; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--surface-2); cursor: zoom-in; }
+.masonry__btn img { width: 100%; height: auto; transition: transform .4s; }
+.masonry__btn:hover img { transform: scale(1.03); }
+.masonry__item figcaption { font-size: .85rem; color: var(--muted); padding: .5rem .2rem 0; }
+.lightbox { position: fixed; inset: 0; z-index: 200; background: rgba(5, 6, 12, .94); display: flex; align-items: center; justify-content: center; gap: 1rem; padding: 2rem; }
+.lightbox[hidden] { display: none; }
+.lightbox figure { margin: 0; max-width: min(1200px, 100%); text-align: center; }
+.lightbox img { max-width: 100%; max-height: 80vh; border-radius: 12px; margin: 0 auto; }
+.lightbox figcaption { color: #c9cbe0; margin-top: .8rem; font-size: .95rem; }
+.lightbox__close { position: absolute; top: 1rem; right: 1.2rem; font-size: 2.2rem; line-height: 1; background: none; border: 0; color: #fff; cursor: pointer; }
+.lightbox__nav { flex: none; width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--border); background: rgba(255, 255, 255, .06); color: #fff; font-size: 1.8rem; cursor: pointer; }
+.lightbox__nav:hover { background: rgba(255, 255, 255, .14); }
+@media (max-width: 720px) {
+  .lightbox { padding: 1rem .5rem; }
+  .lightbox__nav { position: absolute; bottom: 1.2rem; }
+  .lightbox__prev { left: 30%; } .lightbox__next { right: 30%; }
+}
+
 /* Experience */
 .exp .section__head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1rem; max-width: none; }
 .exp .section__head h2 { margin: 0; flex-basis: 100%; }
