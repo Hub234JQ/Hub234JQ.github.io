@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project — Kok Jun Qi</title>
+  <meta name="description" content="Project case study from the portfolio of Kok Jun Qi, Applied AI student and aspiring game developer." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="nav" id="nav">
+    <div class="container nav__inner">
+      <a href="index.html" class="nav__brand" aria-label="Kok Jun Qi, home">
+        <span class="nav__logo">JQ</span>
+        <span>Kok Jun Qi</span>
+      </a>
+      <button class="nav__toggle" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span>
+      </button>
+      <nav id="nav-links" class="nav__links">
+        <a href="index.html#about">About</a>
+        <a href="index.html#work" class="is-active">Work</a>
+        <a href="index.html#experience">Experience</a>
+        <a href="index.html#journey">Journey</a>
+        <a href="index.html#contact" class="btn btn--small">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <div id="project-detail"></div>
+
+    <section class="section contact contact--compact">
+      <div class="container contact__inner reveal">
+        <div>
+          <p class="kicker">Like what you see?</p>
+          <h2>Let's build something together.</h2>
+        </div>
+        <div class="contact__cta">
+          <a class="btn" href="mailto:kokjunqi@gmail.com">Email me</a>
+          <a class="btn btn--ghost" href="assets/Kok_Jun_Qi_Resume.pdf" download>Download resume</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p>© <span class="js-year"></span> Kok Jun Qi · Built by hand with HTML, CSS &amp; JS</p>
+      <a href="#top" onclick="window.scrollTo({top:0});return false;">Back to top ↑</a>
+    </div>
+  </footer>
+
+  <script src="projects.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
