@@ -3,7 +3,7 @@
   - Home page cards and project detail pages (project.html?id=...) are both built from this list.
   - To add a project: copy one block, give it a unique `id`, fill in the fields.
   - Images: put a cover at images/projects/<id>.jpg (16:10).
-    Optional gallery: add file paths to `gallery`, e.g. "images/projects/mustergo/1.jpg".
+    Optional gallery: `gallery: [{ src: "images/projects/<id>/01.jpg", caption: "..." }]` (plain path strings also work).
   - links: buttons; a relative url like "demos/<id>/" points at a demo hosted in this site
   - github: repo URL (shows a GitHub button on the card and detail page)
   - category: "web" | "data" | "mobile" | "design"
@@ -39,7 +39,16 @@ const PROJECTS = [
       "<strong>Deployment:</strong> I configured and deployed the full stack to an Alibaba Cloud ECS VM, with Nginx as the reverse proxy and PM2 managing the processes."
     ],
     learned: "This was my first time owning the auth and permissions layer that every teammate's feature depends on. It taught me to design for other developers as well as end users, and to keep the team's Git history honest about who built what.",
-    gallery: []
+    gallery: [
+      { src: "images/projects/mustergo/01.jpg", caption: "Admin dashboard: live KPIs, coach status and history" },
+      { src: "images/projects/mustergo/02.jpg", caption: "Trip board: coaches, check-ins and itinerary" },
+      { src: "images/projects/mustergo/03.jpg", caption: "Exception inbox with critical alerts" },
+      { src: "images/projects/mustergo/04.jpg", caption: "MusterChat: team messaging and trip assistant" },
+      { src: "images/projects/mustergo/05.jpg", caption: "Account control with role-based permissions" },
+      { src: "images/projects/mustergo/06.jpg", caption: "Mobile staff app: home" },
+      { src: "images/projects/mustergo/07.jpg", caption: "Mobile: live headcount and delegate status" },
+      { src: "images/projects/mustergo/08.jpg", caption: "Mobile: manual check-in by coach" }
+    ]
   },
   {
     id: "shopsphere",
@@ -91,7 +100,20 @@ const PROJECTS = [
       "Built the messaging feature with Flask-SocketIO for real-time, two-way chat between matched users.",
       "Reviewed and verified code integration across the team's modules to make sure features worked together, keeping quality high against the rubric as requirements changed."
     ],
-    gallery: []
+    gallery: [
+      { src: "images/projects/sgen/01.jpg", caption: "Home feed with posts from your communities" },
+      { src: "images/projects/sgen/02.jpg", caption: "A community page" },
+      { src: "images/projects/sgen/03.jpg", caption: "Community chat, senior-friendly view" },
+      { src: "images/projects/sgen/04.jpg", caption: "Community chat, youth view" },
+      { src: "images/projects/sgen/05.jpg", caption: "Editing a sent message" },
+      { src: "images/projects/sgen/06.jpg", caption: "Emoji picker in chat" },
+      { src: "images/projects/sgen/07.jpg", caption: "Community events calendar" },
+      { src: "images/projects/sgen/08.jpg", caption: "Members and roles" },
+      { src: "images/projects/sgen/09.jpg", caption: "Community info panel" },
+      { src: "images/projects/sgen/10.jpg", caption: "Log in" },
+      { src: "images/projects/sgen/11.jpg", caption: "Sign up" },
+      { src: "images/projects/sgen/12.jpg", caption: "Onboarding: complete your profile" }
+    ]
   },
   {
     id: "hospital-ed",
@@ -111,7 +133,13 @@ const PROJECTS = [
       "Built visuals mapping peak demand, arrival patterns and wait time by urgency.",
       "Presented the findings in simple, high-impact charts so non-technical stakeholders could act on them."
     ],
-    gallery: []
+    gallery: [
+      { src: "images/projects/hospital-ed/01.jpg", caption: "Home dashboard: descriptive, resource and predictive analytics" },
+      { src: "images/projects/hospital-ed/02.jpg", caption: "Patient satisfaction vs waiting time" },
+      { src: "images/projects/hospital-ed/03.jpg", caption: "Length of stay by urgency" },
+      { src: "images/projects/hospital-ed/04.jpg", caption: "Outcome distribution by urgency" },
+      { src: "images/projects/hospital-ed/05.jpg", caption: "Arrival periods: busiest days and times" }
+    ]
   },
   {
     id: "csc",
@@ -132,7 +160,12 @@ const PROJECTS = [
       "Built the featured events and photo highlight sections.",
       "Wrote content focused on transparency, showing what each initiative achieved."
     ],
-    gallery: []
+    gallery: [
+      { src: "images/projects/csc/01.jpg", caption: "Home page with featured events" },
+      { src: "images/projects/csc/02.jpg", caption: "Events page" },
+      { src: "images/projects/csc/03.jpg", caption: "About us and our mission" },
+      { src: "images/projects/csc/04.jpg", caption: "Membership sign-up form" }
+    ]
   },
   {
     id: "gpa-calculator",
@@ -176,7 +209,15 @@ const PROJECTS = [
       "Designed the footer with social links, policy pages and back-to-top navigation."
     ],
     note: "This is a demo store. Nothing is actually for sale.",
-    gallery: []
+    gallery: [
+      { src: "images/projects/earsound/01.jpg", caption: "Responsive layout on a narrow screen" },
+      { src: "images/projects/earsound/02.jpg", caption: "Product catalogue" },
+      { src: "images/projects/earsound/03.jpg", caption: "Working JavaScript cart" },
+      { src: "images/projects/earsound/04.jpg", caption: "Order confirmation" },
+      { src: "images/projects/earsound/05.jpg", caption: "Feedback form" },
+      { src: "images/projects/earsound/06.jpg", caption: "About us" },
+      { src: "images/projects/earsound/07.jpg", caption: "Hand-written HTML with Bootstrap" }
+    ]
   },
   {
     id: "win11-app",
@@ -201,7 +242,9 @@ const PROJECTS = [
       "Wrote 4 main tutorials, 4 tip pages and 6 software introduction pages.",
       "Built an animated 5-screen splash sequence and a consistent blue design system."
     ],
-    gallery: []
+    gallery: [
+      { src: "images/projects/win11-app/01.jpg", caption: "Colour scheme for the prototype" }
+    ]
   },
   {
     id: "anime-shirt-store",
@@ -221,7 +264,14 @@ const PROJECTS = [
       "Built a shop page with product sorting, plus About Us and FAQ pages.",
       "Added a contact form with the WPForms plugin and footer navigation for long pages."
     ],
-    gallery: []
+    gallery: [
+      { src: "images/projects/anime-shirt-store/01.jpg", caption: "Home page" },
+      { src: "images/projects/anime-shirt-store/02.jpg", caption: "Shop with product sorting" },
+      { src: "images/projects/anime-shirt-store/03.jpg", caption: "Promotions" },
+      { src: "images/projects/anime-shirt-store/04.jpg", caption: "About us" },
+      { src: "images/projects/anime-shirt-store/05.jpg", caption: "Contact form (WPForms)" },
+      { src: "images/projects/anime-shirt-store/06.jpg", caption: "FAQ" }
+    ]
   },
   {
     id: "honkai-store",
@@ -243,7 +293,10 @@ const PROJECTS = [
       "Added hover animations throughout the product pages."
     ],
     note: "An unofficial fan project for learning, not affiliated with HoYoverse. It's due for a redesign.",
-    gallery: []
+    gallery: [
+      { src: "images/projects/honkai-store/01.jpg", caption: "Hand-written CSS with hover animations" },
+      { src: "images/projects/honkai-store/02.jpg", caption: "Shared navigation markup" }
+    ]
   },
   {
     id: "media",

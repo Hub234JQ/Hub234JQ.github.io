@@ -16,6 +16,53 @@ const badge = (p) => (p.badge ? ` <span class="badge">${esc(p.badge)}</span>` : 
 const detailUrl = (p) => `project.html?id=${encodeURIComponent(p.id)}`;
 const GH_ICON = '<svg class="gh" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.39-5.26 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>';
 
+// ---------- Shared photo gallery + lightbox ----------
+// items: [{ src, caption }]. Renders a masonry grid; call mountLightbox(items, title) after inserting it.
+const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
+function galleryHTML(items, title, word = 'photo') {
+  if (!items.length) return '';
+  return `<section class="d-gallery" id="gallery"><p class="kicker">Gallery · ${plural(items.length, word)}</p>
+    <div class="masonry">${items.map((it, n) => `
+      <figure class="masonry__item">
+        <button type="button" class="masonry__btn" data-lb="${n}" aria-label="Open ${word} ${n + 1}${it.caption ? ': ' + esc(it.caption) : ''}">
+          <img src="${it.src}" alt="${esc(it.caption || `${title} ${word} ${n + 1}`)}" loading="lazy" />
+        </button>
+        ${it.caption ? `<figcaption>${esc(it.caption)}</figcaption>` : ''}
+      </figure>`).join('')}</div></section>
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="${esc(title)} ${word}s" hidden>
+      <button type="button" class="lightbox__close" aria-label="Close">×</button>
+      <button type="button" class="lightbox__nav lightbox__prev" aria-label="Previous">‹</button>
+      <figure><img alt="" /><figcaption></figcaption></figure>
+      <button type="button" class="lightbox__nav lightbox__next" aria-label="Next">›</button>
+    </div>`;
+}
+function mountLightbox(items, title) {
+  const lb = $('#lightbox');
+  if (!lb || !items.length) return;
+  const lbImg = $('img', lb), lbCap = $('figcaption', lb);
+  let cur = 0, opener = null;
+  const show = (n) => {
+    cur = (n + items.length) % items.length;
+    const it = items[cur];
+    lbImg.src = it.src;
+    lbImg.alt = it.caption || `${title} ${cur + 1}`;
+    lbCap.textContent = `${it.caption ? it.caption + ' · ' : ''}${cur + 1} / ${items.length}`;
+  };
+  const open = (n, btn) => { opener = btn; show(n); lb.hidden = false; document.body.style.overflow = 'hidden'; $('.lightbox__close', lb).focus(); };
+  const close = () => { lb.hidden = true; document.body.style.overflow = ''; if (opener) opener.focus(); };
+  $$('[data-lb]').forEach((b) => b.addEventListener('click', () => open(+b.dataset.lb, b)));
+  $('.lightbox__close', lb).addEventListener('click', close);
+  $('.lightbox__prev', lb).addEventListener('click', () => show(cur - 1));
+  $('.lightbox__next', lb).addEventListener('click', () => show(cur + 1));
+  lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
+  document.addEventListener('keydown', (e) => {
+    if (lb.hidden) return;
+    if (e.key === 'Escape') close();
+    if (e.key === 'ArrowLeft') show(cur - 1);
+    if (e.key === 'ArrowRight') show(cur + 1);
+  });
+}
+
 // ---------- Home: project cards ----------
 const grid = $('#projects');
 if (grid && typeof PROJECTS !== 'undefined') {
@@ -49,6 +96,7 @@ if (detail && typeof PROJECTS !== 'undefined') {
     const prev = PROJECTS[(i - 1 + PROJECTS.length) % PROJECTS.length];
     const next = PROJECTS[(i + 1) % PROJECTS.length];
     document.title = `${p.title} — Kok Jun Qi`;
+    const shots = (p.gallery || []).map((g) => (typeof g === 'string' ? { src: g, caption: '' } : g));
     const facts = [['Year', p.year], ['Where', p.place], ['My role', p.role], ['Team', p.team]].filter(([, v]) => v);
 
     detail.innerHTML = `
@@ -75,6 +123,7 @@ if (detail && typeof PROJECTS !== 'undefined') {
             <dl>${facts.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
             <p class="kicker">Built with</p>
             ${tags(p.stack)}
+            ${shots.length ? `<a class="btn btn--small d-facts__btn" href="#gallery">See ${plural(shots.length, 'screenshot')} ↓</a>` : ''}
           </aside>
 
           <div class="d-body">
@@ -87,13 +136,14 @@ if (detail && typeof PROJECTS !== 'undefined') {
           </div>
         </div>
 
-        ${p.gallery?.length ? `<section class="d-gallery reveal"><p class="kicker">Gallery</p><div class="gallery">${p.gallery.map((src, n) => `<a href="${src}" target="_blank">${media(p, 'gallery__item', src, `${p.title} screenshot ${n + 1}`)}</a>`).join('')}</div></section>` : ''}
+        ${galleryHTML(shots, p.title, 'screenshot')}
 
         <nav class="d-nav" aria-label="More projects">
           <a href="${detailUrl(prev)}"><span>← Previous</span><strong>${esc(prev.title)}</strong></a>
           <a href="${detailUrl(next)}" class="d-nav__next"><span>Next →</span><strong>${esc(next.title)}</strong></a>
         </nav>
       </div>`;
+    mountLightbox(shots, p.title);
   }
 }
 
@@ -126,6 +176,7 @@ if (volDetail && typeof VOLUNTEER !== 'undefined') {
     const next = VOLUNTEER[(i + 1) % VOLUNTEER.length];
     const photos = volPhotos(v);
     const cap = (n) => (v.captions && v.captions[n]) || '';
+    const items = photos.map((src, n) => ({ src, caption: cap(n) }));
     document.title = `${v.title} — Kok Jun Qi`;
     volDetail.innerHTML = `
       <section class="d-hero">
@@ -154,50 +205,53 @@ if (volDetail && typeof VOLUNTEER !== 'undefined') {
             ${v.next ? `<section class="reveal"><p class="kicker">What's next</p><blockquote>${esc(v.next)}</blockquote></section>` : ''}
           </div>
         </div>
-        ${photos.length ? `<section class="d-gallery" id="gallery"><p class="kicker">Gallery · ${photos.length} photo${photos.length > 1 ? 's' : ''}</p>
-          <div class="masonry">${photos.map((src, n) => `
-            <figure class="masonry__item">
-              <button type="button" class="masonry__btn" data-lb="${n}" aria-label="Open photo ${n + 1}">
-                <img src="${src}" alt="${esc(cap(n) || `${v.title} photo ${n + 1}`)}" loading="lazy" />
-              </button>
-              ${cap(n) ? `<figcaption>${esc(cap(n))}</figcaption>` : ''}
-            </figure>`).join('')}</div></section>` : ''}
+        ${galleryHTML(items, v.title, 'photo')}
         <nav class="d-nav" aria-label="More volunteering">
           <a href="${volUrl(prev)}"><span>← Previous</span><strong>${esc(prev.title)}</strong></a>
           <a href="${volUrl(next)}" class="d-nav__next"><span>Next →</span><strong>${esc(next.title)}</strong></a>
         </nav>
-      </div>
-      <div class="lightbox" id="lightbox" hidden>
-        <button type="button" class="lightbox__close" aria-label="Close">×</button>
-        <button type="button" class="lightbox__nav lightbox__prev" aria-label="Previous photo">‹</button>
-        <figure><img alt="" /><figcaption></figcaption></figure>
-        <button type="button" class="lightbox__nav lightbox__next" aria-label="Next photo">›</button>
       </div>`;
-
-    // Lightbox: click a photo to view it large; arrows / Esc on keyboard.
-    const lb = $('#lightbox');
-    const lbImg = $('img', lb), lbCap = $('figcaption', lb);
-    let cur = 0;
-    const show = (n) => {
-      cur = (n + photos.length) % photos.length;
-      lbImg.src = photos[cur];
-      lbImg.alt = cap(cur) || `${v.title} photo ${cur + 1}`;
-      lbCap.textContent = `${cap(cur) ? cap(cur) + ' · ' : ''}${cur + 1} / ${photos.length}`;
-    };
-    const open = (n) => { show(n); lb.hidden = false; document.body.style.overflow = 'hidden'; $('.lightbox__close', lb).focus(); };
-    const close = () => { lb.hidden = true; document.body.style.overflow = ''; };
-    $$('[data-lb]').forEach((b) => b.addEventListener('click', () => open(+b.dataset.lb)));
-    $('.lightbox__close', lb).addEventListener('click', close);
-    $('.lightbox__prev', lb).addEventListener('click', () => show(cur - 1));
-    $('.lightbox__next', lb).addEventListener('click', () => show(cur + 1));
-    lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
-    document.addEventListener('keydown', (e) => {
-      if (lb.hidden) return;
-      if (e.key === 'Escape') close();
-      if (e.key === 'ArrowLeft') show(cur - 1);
-      if (e.key === 'ArrowRight') show(cur + 1);
-    });
+    mountLightbox(items, v.title);
   }
+}
+
+// ---------- Achievements page ----------
+const achDetail = $('#achievements-detail');
+if (achDetail && typeof ACHIEVEMENTS !== 'undefined') {
+  const a = ACHIEVEMENTS;
+  const items = a.certificates.map((caption, n) => ({ src: `images/achievements/${String(n + 1).padStart(2, '0')}.jpg`, caption }));
+  achDetail.innerHTML = `
+    <section class="d-hero">
+      <div class="hero__glow" aria-hidden="true"></div>
+      <div class="container">
+        <a class="back" href="index.html#journey">← Beyond the code</a>
+        <p class="kicker">Achievements · 2018 – 2023</p>
+        <h1>${esc(a.title)}</h1>
+        <p class="lead">${esc(a.summary)}</p>
+      </div>
+    </section>
+    <div class="container">
+      ${media({ title: 'Achievements', colors: ['#f59e0b', '#8b7bff'] }, 'd-cover reveal', 'images/achievements.jpg', 'Award certificates')}
+      <div class="d-grid">
+        <aside class="d-facts reveal">
+          <dl>
+            <div><dt>Awards</dt><dd>12, every year from 2018 to 2023</dd></div>
+            <div><dt>Schools</dt><dd>Sembawang Secondary · ITE College Central</dd></div>
+            <div><dt>Certificates</dt><dd>${items.length} photos</dd></div>
+          </dl>
+          <a class="btn btn--small" href="#gallery">See the certificates ↓</a>
+        </aside>
+        <div class="d-body">
+          <section class="reveal"><p class="kicker">My story</p>${a.story.map((p) => `<p>${esc(p)}</p>`).join('')}</section>
+          <section class="reveal"><p class="kicker">Awards</p>
+            <ul class="awards awards--page">${a.awards.map((w) => `<li><span>${esc(w.years || '★')}</span><div><strong>${esc(w.name)}</strong><small>${esc(w.detail)}</small></div></li>`).join('')}</ul>
+          </section>
+          <section class="reveal"><p class="kicker">Certifications</p><ul class="certs">${a.certifications.map((c) => `<li>${esc(c)}</li>`).join('')}</ul></section>
+        </div>
+      </div>
+      ${galleryHTML(items, 'Certificate', 'certificate')}
+    </div>`;
+  mountLightbox(items, 'Certificate');
 }
 
 // ---------- Footer year ----------

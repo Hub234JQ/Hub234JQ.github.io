@@ -17,12 +17,15 @@ Live site: **https://hub234jq.github.io** (GitHub Pages, repo `Hub234JQ/Hub234JQ
 | `index.html` | Home page: hero, About, Work cards, Experience, "Beyond the code" (volunteering), Contact | ✅ |
 | `project.html` | Project detail page — `project.html?id=<project id>` | ✅ |
 | `volunteer.html` | Volunteering detail page + photo gallery/lightbox — `volunteer.html?id=<id>` | ✅ |
+| `achievements.html` + `achievements.js` | Achievements page: story, award list, certifications, certificate photo gallery | ✅ |
+| `favicon.svg`, `images/og.jpg` | Browser-tab icon and the 1200×630 link-preview image (LinkedIn/WhatsApp) | ✅ |
+| `sitemap.xml`, `robots.txt` | For search engines — **add new detail-page URLs to `sitemap.xml`** | ✅ |
 | `404.html` | Not-found page; also redirects deep links inside `/demos/*` back into the demo app | ✅ |
 | `styles.css` | All styling (dark theme, CSS variables at the top) | ✅ |
 | `script.js` | All behaviour: renders cards & detail pages from the data files, nav, filters, lightbox, contact form | ✅ |
 | `projects.js` | **Project content** (array `PROJECTS`) | ✅ |
 | `volunteer.js` | **Volunteering content** (array `VOLUNTEER`) | ✅ |
-| `images/` | `profile.jpg`, `projects/<id>.jpg` covers, `volunteer/<id>.jpg` covers + `volunteer/<id>/01.jpg…` galleries | ✅ |
+| `images/` | `profile.jpg`, `og.jpg`, `projects/<id>.jpg` covers + `projects/<id>/01.jpg…` galleries, `volunteer/…`, `achievements/…` | ✅ |
 | `assets/Kok_Jun_Qi_Resume.pdf` | Public resume (**phone number intentionally removed** — keep it that way) | ✅ |
 | `demos/mustergo/`, `demos/sgen/` | Built, front-end-only demos of two team projects (see §6) | ✅ |
 | `README.md` | This file (also published, so the GitHub repo explains itself) | ✅ |
@@ -59,9 +62,12 @@ Each object in `PROJECTS` drives both the home "Work" card and `project.html?id=
   problem: "…", solution: "…",
   contributions: ["<strong>…</strong> …"],  // "What I did" bullets (HTML allowed)
   learned: "…", note: "…",
-  gallery: []                      // optional: ["images/projects/<id>/1.jpg", …]
+  gallery: [                       // optional screenshots → grid + full-screen viewer on the detail page
+    { src: "images/projects/mustergo/01.jpg", caption: "Admin dashboard" }
+  ]
 }
 ```
+Gallery images live in `images/projects/<id>/01.jpg, 02.jpg …`. Captions describe what the screen shows.
 Cover image: `images/projects/<id>.jpg` (16:10, ~1280×800). If missing, a coloured placeholder shows.
 Keep text **truthful** — only claims backed by the owner's code, resume or old portfolios.
 
@@ -71,8 +77,18 @@ Photos are numbered files: `images/volunteer/<id>/01.jpg`, `02.jpg`, … and `ph
 `captions` is an array in the same order (use `""` for none). Card cover: `images/volunteer/<id>.jpg`.
 **Don't put street addresses in captions** (some photos are at care homes).
 
+### Achievements → `achievements.js`
+Story, grouped award list, certifications, and certificate captions. Photos: `images/achievements/01.jpg…`
+in the same order as `certificates`; cover `images/achievements.jpg`. Award years must match the certificate photos.
+If you change the award counts, also update the short list in `index.html` ("Beyond the code" → Achievements).
+
 ### Other text
-Hero, About, Experience timeline, toolkit, certifications, awards and contact are plain HTML in `index.html`.
+Hero, About, Experience timeline, toolkit, certifications, the short award list and contact are plain HTML in `index.html`.
+
+### Shared UI pieces (in `script.js`)
+- `media(item, cls, src, alt)` — image with a coloured gradient fallback if the file is missing.
+- `galleryHTML(items, title, word)` + `mountLightbox(items, title)` — masonry photo grid and full-screen viewer
+  (← → / Esc keys, focus returns to the clicked photo). Used by project, volunteer and achievements pages.
 
 ### Images
 Resize before adding (long edge ≤ 1600 px, JPEG quality ~80) to keep the site fast.

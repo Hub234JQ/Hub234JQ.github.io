@@ -179,6 +179,11 @@ strong { color: #fff; font-weight: 600; }
 .d-facts dt { font: 500 .74rem var(--font-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
 .d-facts dd { margin: .2rem 0 0; font-weight: 500; }
 .d-facts .tags { margin: 0; }
+.d-facts__btn { margin-top: 1.4rem; }
+.awards--page li { align-items: flex-start; }
+.awards--page span { min-width: 7.5rem; line-height: 1.5; }
+.awards--page strong { display: block; color: var(--text); }
+.awards--page small { color: var(--muted); font-weight: 400; }
 .d-body { max-width: 720px; }
 .d-body section { margin-bottom: 2.8rem; }
 .d-body p { font-size: 1.08rem; color: #c9cbe0; }
